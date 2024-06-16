@@ -71,7 +71,7 @@ def executeProgramSequence(pgm):
     for i in range(0, len(pgm), 3):
         if pgm[i]&1:
             smR.put(pgm[i], 24)
-            #print("Reg[0x"+'{:02x}'.format(pgm[i])+"] is 0x"+ '{:04x}'.format(smR.get()) + ",File=0x"+'{:04x}'.format(pgm[i+1]<<8|pgm[i+2]));
+            print("Reg[0x"+'{:02x}'.format(pgm[i])+"] is 0x"+ '{:04x}'.format(smR.get()) + ",Reference val:0x"+'{:04x}'.format(pgm[i+1]<<8|pgm[i+2]));
         else:
             smW.put(pgm[i]<<16 | (pgm[i+1]<<8|pgm[i+2]), 8)
             smW.get()
@@ -85,10 +85,34 @@ def resetTarget():
     Pin(PIN_SCK, Pin.OUT).value(1)
     time.sleep(1)
     input("pause")
-def IDcheck():
-    executeProgramSequence(b'\x01\x04\x80')
-    #todo
-    
+
+def IDcheck(IDSeq):
+    #SecurityID = 1111 2222 3333 4444 5555 6666 7777 8888 9999 AAAA BBBB CCCC
+    #R 01 04 80
+    #9E 33 33
+    #9C 44 44
+    #9A 55 55
+    #98 66 66
+    #96 77 77
+    #94 88 88
+    #8E 99 99
+    #8C AA AA
+    #88 CC CC
+    #8A BB BB
+    #R 01 04 80
+    #R 91 00 01
+    executeProgramSequence(b'\x01\x04\x80')#Verify REG[0x01]
+    #reg>>1       0x4f, 0x4e, 0x4d, 0x4c, 0x4b, 0x4a, 0x47, 0x46, 0x45, 0x44
+    regMapping = [0x9e, 0x9C, 0x9A, 0x98, 0x96, 0x94, 0x8E, 0x8C, 0x8A, 0x88]
+    for i in enumerate(IDSeq):
+        smW.put(regMapping[i[0]]<<16 | i[1], 8)
+        smW.get()
+        #print(hex(regMapping[i[0]]>>1), hex(i[1]))
+    executeProgramSequence(b'\x01\x04\x80')#Verify REG[0x01]
+    smR.put(0x91, 24)
+    return smR.get()
+
+
 machine.freq(270000000)#270hz
 resetTarget()
 
@@ -110,5 +134,19 @@ print("\nOK")
 executeProgramSequence(plugStep2)
 print("Step2 complete!")
 
-
+while True:
+    ID = []
+    s = input("ID(10 * 4hex):").replace(" ", "")
+    try:
+        for i in range(0, 40, 4):
+            seg = s[i:i+4]
+            ID.append(int(seg, 16))
+    except:
+        print("Invalid format.")
+        continue;
+    print("SerialNum = [",end="")
+    for i in ID:
+        print(hex(i), end=", ")
+    print("]")
+    print("ret="+str(IDcheck(ID)))
 
