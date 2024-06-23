@@ -85,3 +85,13 @@ Target选ML620Q418，点plug
 
 
 Natsuki_min 破解密码：FFFF FFFF 7379 6771 5961 4753 4143 3137 2329 1719 1113 2307
+
+
+
+成功刷机
+方法：
+首先给VPP通7v电压
+进MWU16，security界面选下面的init flash，成功连接上后，在工具栏“TOOL”里选erase flash，全选，点ERASE。擦除完直接unplug
+进DTU8，可以看到rom是一片混乱，不要管他。工具栏左上角，点load program file，然后选中刷机hex文件，等他传完就行了
+没错，就是这么暴力，连security id都不用输。绕了个大弯子
+
