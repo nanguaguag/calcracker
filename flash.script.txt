@@ -1,0 +1,108 @@
+#SET NUMFORMAT HEX
+
+FUNC BlockErase(SEG, ADDR)
+    R 00=0480 67=0000
+    W 67<0001 60<0001 63<SEG 64<ADDR 61<0005
+    R 61=0005 
+    UNTIL 62=101f
+    W 60<0000 61<0000
+    R 67=0001
+    W 67<0000
+END
+FUNC EraseSEG0()
+    BlockErase(0, 0000);
+    BlockErase(0, 0000);
+
+    BlockErase(0, 4000);
+    BlockErase(0, 4000);
+
+    BlockErase(0, 8000);
+    BlockErase(0, 8000);
+
+    BlockErase(0, c000);
+    #write [fc00,fdff] = ff
+    R 00=0480 67=0000 #00:read mode
+    W 67<0001 #enable write mode
+    W 60<0005 63<0000 64<fc00 #start address:fc00
+    REPEAT 256
+        W 65<ffff 61<0004
+        R 61=0004 62=001f
+    END
+
+    #verify
+    R 67=0001 #01:write mode
+    W 67<0000 #enable read mode
+    W 60<0003 63<0000 64<fc00 #start address:fc00
+    REPEAT 256
+        W 61<0001
+        R 66=ffff
+        #IF R 66 != ffff THEN raise_err
+    END
+    W 60<0000 61<0000
+
+    
+    BlockErase(0, c000);    
+    #rewrite [fc00,fdff] = ff
+    R 00=0480 67=0000 #00:read mode
+    W 67<0001 #enable write mode
+    W 60<0005 63<0000 64<fc00 #start address:fc00
+    REPEAT 256
+        W 65<ffff 61<0004
+        R 61=0004 62=101f
+    END
+
+    #verify
+    R 67=0001
+    W 67<0000 60<0003 63<0000 64<fc00
+    REPEAT 256
+        W 61<0001
+        R 66=ffff
+        #IF R 66 != ffff THEN raise_err
+    END
+END
+FUNC EraseAll()
+    EraseSEG0()
+
+    BlockErase(1, 0000);
+    BlockErase(1, 0000);
+    BlockErase(1, 4000);
+    BlockErase(1, 4000);
+    BlockErase(1, 8000);
+    BlockErase(1, 8000);
+    BlockErase(1, c000);
+    BlockErase(1, c000);
+    
+    BlockErase(2, 0000);
+    BlockErase(2, 0000);
+    BlockErase(2, 4000);
+    BlockErase(2, 4000);
+    BlockErase(2, 8000);
+    BlockErase(2, 8000);
+    BlockErase(2, c000);
+    BlockErase(2, c000);
+
+    BlockErase(3, 0000);
+    BlockErase(3, 0000);
+    BlockErase(3, 4000);
+    BlockErase(3, 4000);
+    BlockErase(3, 8000);
+    BlockErase(3, 8000);
+    BlockErase(3, c000);
+    BlockErase(3, c000);
+
+    BlockErase(7, 0000);#Data flash
+END
+FUNC FlashBIN(*file)
+    REPEAT 3 I
+        R 67=0001
+        W 67<0000
+        W 60<0000 61<0000
+        R 00=0480 67=0000
+        W 67<0001 60<0005 63<I 64<0000 
+        REPEAT 1000
+            W 65<((*(file+1) << 8) | *file) 61<0004
+            R 61=0004 62=001f
+            file+=2
+        END
+    END
+END
