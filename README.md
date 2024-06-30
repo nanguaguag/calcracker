@@ -17,7 +17,7 @@ NC   SDA
 
 NC   SCK
 
-NC   NC
+NC   VPP
 
 GND  VREF
 
