@@ -1,36 +1,21 @@
-# CALCracker
+Lexide Toolchain: [LEXIDE-Ω development tools](http://rohmfs-rohm-com-cn.oss-cn-shanghai.aliyuncs.com/lapis/support/lpmcu/DL_DATA/DEV_TOOL/soft_tool/U8_Development_Tools/LAPIS_LEXIDE_V1_1_1.zip)
 
-#### Description
-fx991cnx刷机
+gitee/github Repository: [gitee](http://gitee.com/mc-sdx/calcracker) , [github](http://github.com/mc-sdx/CWI-hacking/tree/master)
 
-#### Software Architecture
-Software architecture description
+uEASE New Version Firmware: [uEase V3.21](http://rohmfs-rohm-com-cn.oss-cn-shanghai.aliyuncs.com/lapis/support/lpmcu/DL_DATA/DEV_TOOL/soft_tool/MWuEASE/uEASE_Firmware_Ver321.zip), or in my repository.
 
-#### Installation
+## Preparation:
+1. Install the Lexide toolchain first.
+2. In the installation directory, locate the ML620418.TRG file and replace it with the TRG file from my repository.
+3. Remove the calculator battery and connect the calculator to uEASE.
+4. CALC and uEASE connections:
+   - P152 — SDA
+   - P151 — SCK
+   - P150(reversed)
+   - (reversed)VPP
+   - VCC — 3.3V, VREF (connect together to the calculator VCC)
+   - GND — GND
+uEASE Pinout
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### Instructions
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### Contribution
-
-1.  Fork the repository
-2.  Create Feat_xxx branch
-3.  Commit your code
-4.  Create Pull Request
-
-
-#### Gitee Feature
-
-1.  You can use Readme\_XXX.md to support different languages, such as Readme\_en.md, Readme\_zh.md
-2.  Gitee blog [blog.gitee.com](https://blog.gitee.com)
-3.  Explore open source project [https://gitee.com/explore](https://gitee.com/explore)
-4.  The most valuable open source project [GVP](https://gitee.com/gvp)
-5.  The manual of Gitee [https://gitee.com/help](https://gitee.com/help)
-6.  The most popular members  [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+#＃ Update uEASE:
+Open dtu8, click on "update," then click on the "ueb" icon at the top left corner, select the firmware, and click OK.
